@@ -11,6 +11,7 @@ const bcrypt = require('bcrypt');
 const token = uid2(32);
 // _________________________| Signup Route |_______________________
 router.post('/signup', (req, res) => {
+  const hash = bcrypt.hashSync(req.body.password, 10);
   
   //check  is all fields are filled  
   if (!checkBody(req.body, ['username', 'pseudo', 'password',])) {
@@ -21,7 +22,6 @@ router.post('/signup', (req, res) => {
   
   User.findOne({ pseudo : req.body.pseudo })
   .then(data => {
-    const hash = bcrypt.hashSync(req.body.password, 10);
     // register user if not existing
     if (data === null) {
       const newUser = new User ({
