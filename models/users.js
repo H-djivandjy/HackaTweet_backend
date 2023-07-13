@@ -9,4 +9,7 @@ const usersSchema = mongoose.Schema({
     isConnected: Boolean,
 })
 
+
 const User = mongoose.model('users', usersSchema)
+
+module.exports = User;
