@@ -1,13 +1,11 @@
 const mongoose = require('mongoose')
 
-const hashtagsSchema = mongoose.Schema({
-    hashtagMsg: String,
-})
 
 const tweetsSchema = mongoose.Schema({
     message: String,
     date: Date,
-    hashtag: hashtagsSchema,
+    likes: Number,
+    hashtag: Array,
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'users'},
 
 })

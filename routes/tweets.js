@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 require('../models/connection');
 const Tweet = require('../models/tweets');
+const User = require('../models/users');
 const { checkBody } = require('../modules/checkBody');
 const uid2 = require('uid2');
 const bcrypt = require('bcrypt');
@@ -10,21 +11,74 @@ const bcrypt = require('bcrypt');
 
 // ________________________| Tweet Route |_______________________
 router.post('/', (req, res)=>{
-    const tweetMsg = req.body.tweet
+    const tweet = req.body.tweet
+    const pseudo = req.body.pseudo
 
+    // check empty fields
 if (!checkBody(req.body, ['tweet'])) {
     res.json({ result: false, error: 'Empty field' });
     return;
   }
+  
 
-  const filterTweet = tweetMsg.includes('#')
+// check tweet length
+if (tweet.length >= 281){
+    res.json({result: false, error: "Max Length Exceeded"})
+    return;
+}
 
-  res.json({result: true, tweet: tweetMsg})
-  console.log(filterTweet)
+
+// check if there is a hashtag
+if (tweet.includes('#')){
+    const hashtag = tweet.match(/#\w+/g)
+    const hashtagsArray = []
+    for (let i = 0; i < hashtag.length; i++) {
+        hashtagsArray.push(hashtag[i])
+    }
+    // console.log('the array :',hashtagsArray)
+
+    User.findOne({pseudo: pseudo})
+    .then(data =>{
+            const newTweetHashtag = new Tweet({
+                message: tweet,
+                date: new Date(),
+                likes: null,
+                hashtag: hashtagsArray,
+                user: data._id,
+            })
+            newTweetHashtag.save().then(tweetData => {
+                console.log(tweetData)
+                res.json({result: true, message: "Tweet with Hashtags created"})
+            })
+
+        })
+    // res.json({result: true, tweet: tweet, hashtag: hashtag})
+}else{
+    User.findOne({ pseudo: pseudo })
+        .then(data =>{
+            // tweet creation without hashtag
+                const newTweet = new Tweet({
+                    message: tweet,
+                    date: new Date(),
+                    likes: null,
+                    hashtag: [],
+                    user: data._id,
+                })
+                newTweet.save().then(tweetData => {
+                    console.log(tweetData)
+                    res.json({result: true, message: "Tweet created"})
+                })
+
+        })
+        
+    }
+
+
+
 
 });
 
-// coucou
+
 // ________________________| Hashtag Route |_______________________
 
 
