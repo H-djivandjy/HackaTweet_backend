@@ -129,6 +129,25 @@ router.put('/', (req, res)=>{
 
 
 
+// ________________________| Delete Tweet Route |__________________
+
+router.delete('/tweets', (req, res) => {
+  //if (isConnected) { 
+    Tweet.deleteOne( {"_id": ObjectId(req.body.ObjectId)})
+    .then(data => { 
+      res.json({ result: true, message: "succesfully deleted"})
+    })
+      //deleteOne( {"_id": ObjectId("4d512b45cc9374271b02ec4f")})
+      
+//  }
+})
+
+
+// ________________________| get like nb Route |__________________
+
+
+
+
 
 
 module.exports = router;
